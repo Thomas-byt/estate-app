@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using EstateApp.Data.DatabaseContexts.ApplicationDbContext;
 using EstateApp.Data.DatabaseContexts.AuthenticationDbContext;
 using EstateApp.Data.Entities;
+using EstateApp.Web.Interfaces;
+using EstateApp.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -59,6 +61,7 @@ namespace EstateApp.Web
 
 
             services.AddControllersWithViews();
+            services.AddTransient<IAccountsService, AccountsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,7 +82,10 @@ namespace EstateApp.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {
@@ -111,7 +117,6 @@ namespace EstateApp.Web
                 var roleExists = await roleManager.RoleExistsAsync(role);
                 if(!roleExists)
                 {
-                    
                     await roleManager.CreateAsync(new IdentityRole{Name = role});
                 }
 
